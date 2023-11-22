@@ -1,0 +1,103 @@
+Router:
+FOEPULET_R>en
+FOEPULET_R>enable 
+FOEPULET_R#hostname FOEPULET_R
+FOEPULET_R#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+FOEPULET_R(config)#int gig0/0.15
+FOEPULET_R(config-subif)#enca
+FOEPULET_R(config-subif)#encapsulation dot
+FOEPULET_R(config-subif)#encapsulation dot1Q 15
+FOEPULET_R(config-subif)#ip add
+FOEPULET_R(config-subif)#ip address 192.168.10.1 255.255.255.224
+FOEPULET_R(config-subif)#int gig0/0.8
+FOEPULET_R(config-subif)#enca
+FOEPULET_R(config-subif)#encapsulation dot
+FOEPULET_R(config-subif)#encapsulation dot1Q 8
+FOEPULET_R(config-subif)#ip add
+FOEPULET_R(config-subif)#ip address 192.168.10.33 255.255.255.240
+FOEPULET_R(config-subif)#int gig0/0.7
+FOEPULET_R(config-subif)#enc
+FOEPULET_R(config-subif)#encapsulation dot
+FOEPULET_R(config-subif)#encapsulation dot1Q 7
+FOEPULET_R(config-subif)#ip add
+FOEPULET_R(config-subif)#ip address 192.168.10.49 255.255.255.240
+FOEPULET_R(config-subif)#int gig0/0
+FOEPULET_R(config-if)#no sh
+
+DHCP:
+
+FOEPULET_R(config)#ip dhcp pool ORVOSIG
+FOEPULET_R(dhcp-config)#network 192.168.10.0 255.255.255.224
+FOEPULET_R(dhcp-config)#default-router 192.168.10.1
+FOEPULET_R(dhcp-config)#domain-name szaszkh.hu
+FOEPULET_R(dhcp-config)#ex
+FOEPULET_R(config)#ip dhcp excluded-address 192.168.10.10 192.168.10.25
+FOEPULET_R(config)#ip dhcp excluded-address 192.168.10.1 192.168.10.9
+FOEPULET_R(config)#ip dhcp excluded-address 192.168.10.25 192.168.10.30
+
+FOEPULET_R(config)#ip dhcp pool GAZDASAGIIG
+FOEPULET_R(dhcp-config)#network 192.168.10.32 255.255.255.240 
+FOEPULET_R(dhcp-config)#default-router 192.168.10.33
+FOEPULET_R(dhcp-config)#domain-name szaszkh.hu
+FOEPULET_R(dhcp-config)#ex
+FOEPULET_R(config)#ip dhcp excluded-address 192.168.10.33 192.168.10.38
+
+FOEPULET_R(config)#ip dhcp pool FOIG
+FOEPULET_R(dhcp-config)#network 192.168.10.48 255.255.255.240
+FOEPULET_R(dhcp-config)#default-router 192.168.10.49
+FOEPULET_R(dhcp-config)#domain-name szaszkh.hu
+FOEPULET_R(dhcp-config)#ex
+FOEPULET_R(config)#ip dhcp excluded-address 192.168.10.49
+FOEPULET_R(config)#ip dhcp excluded-address 192.168.10.58 192.168.10.62
+
+
+Switchek:
+
+vlan 15
+name ORVOSI
+vlan 8 
+name GAZDASAGI
+vlan 7 
+name FOIGAZGATOSAG
+
+Pagp
+ 
+S1(config)#int range fa0/1,fa0/6
+S1(config-if-range)#channel-group 1 mode desirable 
+S1(config)#interface port-channel 1
+S1(config-if)#sw mode trunk 
+
+S1(config)#int range fa0/10,fa0/11
+S1(config-if-range)#channel-group 2 mode desirable 
+S1(config)#interface port-channel 2
+S1(config-if)#sw mode trunk 
+
+S1(config-if)#int range fa0/4,fa0/9
+S1(config-if-range)#channel-group 3 mode desirable 
+S1(config)#interface port-channel 3
+S1(config-if)#sw mode trunk 
+
+S2
+S2(config-if)#int range fa0/2,fa0/7
+S2(config-if-range)#channel-group 4 mode auto
+S2(config)#interface port-channel 4
+S2(config-if)#sw mode trunk 
+
+
+S4(config-if)#int range fa0/3,fa0/8
+S4(config-if-range)#channel-group 5 mode desirable 
+S2(config)#interface port-channel 5
+S2(config-if)#sw mode trunk 
+
+
+VTP
+S1(config)#vtp mode server 
+S1(config)#vtp domain szaszkh.hu
+S1(config)#vtp version 2
+S1(config)#vtp password szaszkh123
+
+Többi Switch
+vtp mode client
+vtp password szaszkh123
+vtp domain szaszkh.hu
