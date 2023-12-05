@@ -101,3 +101,8 @@ Többi Switch
 vtp mode client
 vtp password szaszkh123
 vtp domain szaszkh.hu
+
+HSRP-kész virtuális ip 192.168.99.254
+spanning-tree bpduguard kiadva end device felé
+ftp user adatok beírva
+ 
